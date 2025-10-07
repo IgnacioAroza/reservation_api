@@ -177,7 +177,7 @@ Swagger UI:
 
 **Ignacio Aroza**  
 Senior Software Engineer & SaaS Architect  
-📧 [ignacio@example.com](mailto:ignacio@example.com)
+📧 [ignacioaroza.ia@gmail.com](mailto:ignacioaroza.ia@gmail.com)
 
 ---
 
