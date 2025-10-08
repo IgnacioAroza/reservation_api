@@ -1,9 +1,6 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -11,4 +8,153 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+// ============================================
+// 🏢 Multi-tenant & Auth
+// ============================================
+
+model Company {
+  id         String     @id @default(uuid())
+  name       String
+  slug       String?    @unique
+  users      User[]
+  properties Property[]
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+
+  @@map("companies")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  role      Role     @default(AGENT)
+  companyId String
+  company   Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([companyId, role])
+  @@index([email])
+  @@map("users")
+}
+
+enum Role {
+  ADMIN
+  AGENT
+  VIEWER
+}
+
+// ============================================
+// 🏡 Properties & Units
+// ============================================
+
+model Property {
+  id        String   @id @default(uuid())
+  companyId String
+  company   Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  name      String
+  address   String?
+  timezone  String   @default("UTC")
+  isActive  Boolean  @default(true)
+  units     Unit[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([companyId, isActive])
+  @@map("properties")
+}
+
+model Unit {
+  id           String          @id @default(uuid())
+  propertyId   String
+  property     Property        @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  name         String
+  maxOccupancy Int?
+  isActive     Boolean         @default(true)
+  inventory    InventoryDate[]
+  reservations Reservation[]
+  holds        Hold[]
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+
+  @@index([propertyId, isActive])
+  @@map("units")
+}
+
+// ============================================
+// 📅 Availability & Inventory
+// ============================================
+
+model InventoryDate {
+  unitId String
+  unit   Unit     @relation(fields: [unitId], references: [id], onDelete: Cascade)
+  date   DateTime // UTC midnight del día local
+  booked Boolean  @default(false)
+
+  @@id([unitId, date])
+  @@index([date])
+  @@index([unitId, booked])
+  @@map("inventory_dates")
+}
+
+// ============================================
+// 🔒 Holds (Temporary Reservations)
+// ============================================
+
+model Hold {
+  id           String        @id @default(uuid())
+  unitId       String
+  unit         Unit          @relation(fields: [unitId], references: [id], onDelete: Cascade)
+  checkIn      DateTime
+  checkOut     DateTime
+  expiresAt    DateTime
+  companyId    String
+  payload      Json?
+  reservations Reservation[]
+  createdAt    DateTime      @default(now())
+
+  @@index([unitId, expiresAt])
+  @@index([expiresAt])
+  @@index([companyId])
+  @@map("holds")
+}
+
+// ============================================
+// 📝 Reservations
+// ============================================
+
+model Reservation {
+  id          String            @id @default(uuid())
+  companyId   String
+  unitId      String
+  unit        Unit              @relation(fields: [unitId], references: [id])
+  guestName   String
+  guestEmail  String
+  checkIn     DateTime
+  checkOut    DateTime
+  status      ReservationStatus @default(PENDING)
+  holdId      String?           @unique
+  hold        Hold?             @relation(fields: [holdId], references: [id])
+  totalAmount Decimal?          @db.Decimal(10, 2)
+  currency    String?           @default("USD")
+  canceledAt  DateTime?
+  canceledBy  String?
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  @@index([unitId, checkIn, checkOut])
+  @@index([companyId, status])
+  @@index([status, checkIn])
+  @@index([guestEmail])
+  @@map("reservations")
+}
+
+enum ReservationStatus {
+  PENDING
+  CONFIRMED
+  CANCELED
 }
