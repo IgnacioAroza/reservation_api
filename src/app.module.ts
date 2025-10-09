@@ -25,11 +25,10 @@ import { CompaniesModule } from './companies/companies.module';
     // Database & Cache
     PrismaModule,
     RedisModule,
-    // AuthModule,
-    CompaniesModule,
 
-    // Feature modules (agregar aquí más adelante)
-    // AuthModule,
+    // Feature modules
+    AuthModule,
+    CompaniesModule,
     // UsersModule,
     // PropertiesModule,
     // etc.
