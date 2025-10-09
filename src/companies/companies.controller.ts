@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   ParseUUIDPipe,
+  UseGuards,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -15,11 +16,13 @@ import {
   ApiParam,
   ApiBearerAuth,
 } from '@nestjs/swagger';
+import { Role } from '@prisma/client';
 import { CompaniesService } from './companies.service';
 import { CreateCompanyDto } from './dto/create-company.dto';
 import { UpdateCompanyDto } from './dto/update-company.dto';
 import { Public } from '../common/decorators/public.decorator';
 import { successResponse } from '../common/interfaces/api-response.interface';
+import { JwtAuthGuard, Roles, RolesGuard } from '../auth';
 
 @Controller('companies')
 @ApiTags('companies')
@@ -62,8 +65,8 @@ export class CompaniesController {
   }
 
   @Get()
-  // @UseGuards(JwtAuthGuard, RolesGuard) // Después de implementar auth
-  // @Roles(Role.ADMIN) // Solo admins pueden ver todas las compañías
+  @UseGuards(JwtAuthGuard, RolesGuard) // Después de implementar auth
+  @Roles(Role.ADMIN) // Solo admins pueden ver todas las compañías
   @ApiOperation({ summary: 'List all companies' })
   @ApiResponse({
     status: 200,
@@ -94,7 +97,7 @@ export class CompaniesController {
   }
 
   @Get(':id')
-  // @UseGuards(JwtAuthGuard) // Después de implementar auth
+  @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Get a company by ID' })
   @ApiParam({
     name: 'id',
@@ -138,7 +141,7 @@ export class CompaniesController {
   }
 
   @Get('slug/:slug')
-  // @UseGuards(JwtAuthGuard) // Después de implementar auth
+  @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Get a company by slug' })
   @ApiParam({
     name: 'slug',
@@ -163,8 +166,8 @@ export class CompaniesController {
   }
 
   @Patch(':id')
-  // @UseGuards(JwtAuthGuard, RolesGuard) // Después de implementar auth
-  // @Roles(Role.ADMIN) // Solo admins pueden actualizar compañías
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN) // Solo admins pueden actualizar compañías
   @ApiOperation({ summary: 'Update a company' })
   @ApiParam({
     name: 'id',
@@ -206,8 +209,8 @@ export class CompaniesController {
   }
 
   @Delete(':id')
-  // @UseGuards(JwtAuthGuard, RolesGuard) // Después de implementar auth
-  // @Roles(Role.ADMIN) // Solo admins pueden eliminar compañías
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN) // Solo admins pueden eliminar compañías
   @ApiOperation({ summary: 'Soft delete a company' })
   @ApiParam({
     name: 'id',
