@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { ThrottlerModule } from '@nestjs/throttler';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { PrismaModule } from './prisma/prisma.module';
 import { RedisModule } from './redis/redis.module';
+import { AuthModule } from './auth/auth.module';
+import { CompaniesModule } from './companies/companies.module';
 
 @Module({
   imports: [
@@ -25,6 +25,8 @@ import { RedisModule } from './redis/redis.module';
     // Database & Cache
     PrismaModule,
     RedisModule,
+    // AuthModule,
+    CompaniesModule,
 
     // Feature modules (agregar aquí más adelante)
     // AuthModule,
@@ -32,7 +34,7 @@ import { RedisModule } from './redis/redis.module';
     // PropertiesModule,
     // etc.
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [],
+  providers: [],
 })
 export class AppModule {}

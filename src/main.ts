@@ -26,26 +26,31 @@ async function bootstrap() {
   //   credentials: true,
   // });
 
+  app.setGlobalPrefix('v1/api');
+
   // Swagger documentation
   const config = new DocumentBuilder()
     .setTitle('Reservations API')
-    .setDescription(
-      'API modular de reservaciones y disponibilidad en tiempo real',
-    )
+    .setDescription('Modular reservations and real-time availability API')
     .setVersion('1.0')
     .addBearerAuth()
-    .addTag('auth', 'Autenticación y autorización')
-    .addTag('users', 'Gestión de usuarios')
-    .addTag('companies', 'Gestión de compañías (multi-tenant)')
-    .addTag('properties', 'Gestión de propiedades')
-    .addTag('units', 'Gestión de unidades')
-    .addTag('availability', 'Consulta de disponibilidad')
-    .addTag('holds', 'Reservas temporales (holds)')
-    .addTag('reservations', 'Gestión de reservas')
+    .addTag('auth', 'Authentication and authorization')
+    .addTag('users', 'User management')
+    .addTag('companies', 'Company management (multi-tenant)')
+    .addTag('properties', 'Property management')
+    .addTag('units', 'Unit management')
+    .addTag('availability', 'Availability queries')
+    .addTag('holds', 'Temporary reservations (holds)')
+    .addTag('reservations', 'Reservation management')
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api/docs', app, document);
+  SwaggerModule.setup('docs', app, document, {
+    customSiteTitle: 'Reservations API Docs',
+    swaggerOptions: {
+      persistAuthorization: true, // Mantiene el token entre recargas
+    },
+  });
 
   // Get port from config
   const port = envs.port;
@@ -54,7 +59,8 @@ async function bootstrap() {
 
   logger.log(`
   🚀 Application is running on: http://localhost:${port}
-  📚 Swagger docs available at: http://localhost:${port}/api/docs
+  📚 Swagger docs available at: http://localhost:${port}/docs
+  🔗 API endpoints: http://localhost:${port}/v1/api/*
   `);
 }
 
