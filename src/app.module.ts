@@ -5,6 +5,7 @@ import { PrismaModule } from './prisma/prisma.module';
 import { RedisModule } from './redis/redis.module';
 import { AuthModule } from './auth/auth.module';
 import { CompaniesModule } from './companies/companies.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { CompaniesModule } from './companies/companies.module';
     // Feature modules
     AuthModule,
     CompaniesModule,
+    UsersModule,
     // UsersModule,
     // PropertiesModule,
     // etc.

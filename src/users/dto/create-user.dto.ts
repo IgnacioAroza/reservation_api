@@ -1,32 +1,29 @@
 import {
   IsEmail,
-  IsEnum,
-  IsNotEmpty,
-  IsOptional,
   IsString,
-  IsUUID,
   MinLength,
   MaxLength,
+  IsUUID,
+  IsEnum,
+  IsOptional,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { Role } from '@prisma/client';
 
-export class RegisterDto {
+export class CreateUserDto {
   @ApiProperty({
     description: 'User email address',
     example: 'john.doe@example.com',
   })
   @IsEmail()
-  @IsNotEmpty()
   email: string;
 
   @ApiProperty({
     description: 'User password (minimum 8 characters)',
-    example: 'SecurePass123!',
+    example: 'SecurePass123',
     minLength: 8,
   })
   @IsString()
-  @IsNotEmpty()
   @MinLength(8)
   password: string;
 
@@ -37,7 +34,6 @@ export class RegisterDto {
     maxLength: 50,
   })
   @IsString()
-  @IsNotEmpty()
   @MinLength(2)
   @MaxLength(50)
   firstName: string;
@@ -49,21 +45,19 @@ export class RegisterDto {
     maxLength: 50,
   })
   @IsString()
-  @IsNotEmpty()
   @MinLength(2)
   @MaxLength(50)
   lastName: string;
 
   @ApiProperty({
-    description: 'Company ID (UUID) that the user belongs to',
+    description: 'Company ID (UUID)',
     example: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
   })
   @IsUUID()
-  @IsNotEmpty()
   companyId: string;
 
   @ApiProperty({
-    description: 'User role in the system',
+    description: 'User role',
     enum: Role,
     example: Role.AGENT,
     default: Role.AGENT,

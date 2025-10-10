@@ -3,13 +3,13 @@ import { Role } from '@prisma/client';
 
 export class UserResponseDto {
   @ApiProperty({
-    description: 'User ID',
+    description: 'User ID (UUID)',
     example: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
   })
   id: string;
 
   @ApiProperty({
-    description: 'User email',
+    description: 'User email address',
     example: 'john.doe@example.com',
   })
   email: string;
@@ -34,7 +34,7 @@ export class UserResponseDto {
   role: Role;
 
   @ApiProperty({
-    description: 'Company ID',
+    description: 'Company ID (UUID)',
     example: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
   })
   companyId: string;
@@ -46,28 +46,29 @@ export class UserResponseDto {
   isActive: boolean;
 
   @ApiProperty({
-    description: 'Creation timestamp',
-    example: '2025-10-09T10:00:00.000Z',
+    description: 'User creation timestamp',
+    example: '2025-10-10T10:00:00.000Z',
   })
   createdAt: Date;
 
   @ApiProperty({
-    description: 'Last update timestamp',
-    example: '2025-10-09T10:00:00.000Z',
+    description: 'User last update timestamp',
+    example: '2025-10-10T10:00:00.000Z',
   })
   updatedAt: Date;
-}
-
-export class AuthResponseDto {
-  @ApiProperty({
-    description: 'JWT access token',
-    example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
-  })
-  access_token: string;
 
   @ApiProperty({
-    description: 'User information',
-    type: UserResponseDto,
+    description: 'Company information',
+    required: false,
+    example: {
+      id: 'uuid-1',
+      name: 'Acme Corporation',
+      slug: 'acme-corporation',
+    },
   })
-  user: UserResponseDto;
+  company?: {
+    id: string;
+    name: string;
+    slug: string;
+  };
 }
