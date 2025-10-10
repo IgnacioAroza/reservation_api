@@ -22,7 +22,9 @@ import { CreateCompanyDto } from './dto/create-company.dto';
 import { UpdateCompanyDto } from './dto/update-company.dto';
 import { Public } from '../common/decorators/public.decorator';
 import { successResponse } from '../common/interfaces/api-response.interface';
-import { JwtAuthGuard, Roles, RolesGuard } from '../auth';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { RolesGuard } from '../auth/guards/roles.guard';
+import { Roles } from '../auth/decorators/roles.decorator';
 
 @Controller('companies')
 @ApiTags('companies')
